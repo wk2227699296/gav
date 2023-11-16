@@ -18,7 +18,7 @@ import (
 // @description                 This is a sample Server pets
 // @securityDefinitions.apikey  ApiKeyAuth
 // @in                          header
-// @name                        x-token
+// @name                        x-token 1
 // @BasePath                    /
 func main() {
 	global.GVA_VP = core.Viper() // Initializing viper
