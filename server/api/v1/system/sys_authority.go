@@ -8,7 +8,6 @@ import (
 	systemReq "github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
 	systemRes "github.com/flipped-aurora/gin-vue-admin/server/model/system/response"
 	"github.com/flipped-aurora/gin-vue-admin/server/utils"
-
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -43,6 +42,7 @@ func (a *AuthorityApi) CreateAuthority(c *gin.Context) {
 	} else {
 		_ = menuService.AddMenuAuthority(systemReq.DefaultMenu(), authority.AuthorityId)
 		_ = casbinService.UpdateCasbin(authority.AuthorityId, systemReq.DefaultCasbin())
+		utils.Del(system.SysAuthority{}.TableName())
 		response.OkWithDetailed(systemRes.SysAuthorityResponse{Authority: authBack}, global.Translate("general.createSuccss"), c)
 	}
 }
@@ -79,6 +79,7 @@ func (a *AuthorityApi) CopyAuthority(c *gin.Context) {
 		response.FailWithMessage(global.Translate("general.copyFailErr")+" "+err.Error(), c)
 		return
 	}
+	utils.Del(system.SysAuthority{}.TableName())
 	response.OkWithDetailed(systemRes.SysAuthorityResponse{Authority: authBack}, global.Translate("general.copySuccess"), c)
 }
 
@@ -109,6 +110,7 @@ func (a *AuthorityApi) DeleteAuthority(c *gin.Context) {
 		response.FailWithMessage(global.Translate("general.deletFailErr")+" "+err.Error(), c)
 		return
 	}
+	utils.Del(system.SysAuthority{}.TableName())
 	response.OkWithMessage(global.Translate("general.deleteSuccess"), c)
 }
 
@@ -139,6 +141,7 @@ func (a *AuthorityApi) UpdateAuthority(c *gin.Context) {
 		response.FailWithMessage(global.Translate("general.updateFailErr")+" "+err.Error(), c)
 		return
 	}
+	utils.Del(system.SysAuthority{}.TableName())
 	response.OkWithDetailed(systemRes.SysAuthorityResponse{Authority: authority}, global.Translate("general.updateSuccess"), c)
 }
 
@@ -163,18 +166,28 @@ func (a *AuthorityApi) GetAuthorityList(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	list, total, err := authorityService.GetAuthorityInfoList(pageInfo)
-	if err != nil {
-		global.GVA_LOG.Error(global.Translate("general.getDataFail"), zap.Error(err))
-		response.FailWithMessage(global.Translate("general.getDataFailErr")+" "+err.Error(), c)
-		return
+
+	// 从redis中获取
+	//key := utils.GetKey(system.SysAuthority{}.TableName(), pageInfo)
+	key := utils.GetKey(system.SysAuthority{}.TableName(), nil)
+	ok, data := utils.Get(key)
+	if !ok {
+		list, total, err := authorityService.GetAuthorityInfoList(pageInfo)
+		if err != nil {
+			global.GVA_LOG.Error(global.Translate("general.getDataFail"), zap.Error(err))
+			response.FailWithMessage(global.Translate("general.getDataFailErr")+" "+err.Error(), c)
+			return
+		}
+		data = response.PageResult{
+			List:     list,
+			Total:    total,
+			Page:     pageInfo.Page,
+			PageSize: pageInfo.PageSize,
+		}
 	}
-	response.OkWithDetailed(response.PageResult{
-		List:     list,
-		Total:    total,
-		Page:     pageInfo.Page,
-		PageSize: pageInfo.PageSize,
-	}, global.Translate("general.getDataSuccess"), c)
+	// 设置redis
+	utils.Set(key, data)
+	response.OkWithDetailed(data, global.Translate("general.getDataSuccess"), c)
 }
 
 // SetDataAuthority
@@ -204,5 +217,6 @@ func (a *AuthorityApi) SetDataAuthority(c *gin.Context) {
 		response.FailWithMessage(global.Translate("general.setupFail")+" "+err.Error(), c)
 		return
 	}
+	utils.Del(system.SysAuthority{}.TableName())
 	response.OkWithMessage(global.Translate("general.setupSuccess"), c)
 }

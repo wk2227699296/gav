@@ -2,9 +2,8 @@ package initialize
 
 import (
 	"context"
-
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
-
+	"github.com/flipped-aurora/gin-vue-admin/server/utils"
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
 )
@@ -21,6 +20,8 @@ func Redis() {
 		global.GVA_LOG.Error("redis connect ping failed, err:", zap.Error(err))
 	} else {
 		global.GVA_LOG.Info("redis connect ping response:", zap.String("pong", pong))
+		client.Set(context.Background(), "test", 1, 0)
 		global.GVA_REDIS = client
+		utils.Client = client
 	}
 }
