@@ -51,6 +51,10 @@ func (wkinfoService *WkInfoService) DeleteWkInfoByIds(ids request.IdsReq, delete
 // UpdateWkInfo 更新WkInfo记录
 // Author [piexlmax](https://github.com/piexlmax)
 func (wkinfoService *WkInfoService) UpdateWkInfo(wkinfo wkTest.WkInfo) (err error) {
+
+	// 更新前先删除原有的关联关系
+	err = global.GVA_DB.Where("wk_info_id = ?", wkinfo.ID).Delete(&wkTest.WkInfoWkStudent{}).Error
+
 	err = global.GVA_DB.Save(&wkinfo).Error
 	return err
 }

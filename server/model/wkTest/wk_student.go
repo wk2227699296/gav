@@ -17,3 +17,10 @@ type WkStudent struct {
 func (WkStudent) TableName() string {
 	return "wk_student"
 }
+
+type WkInfoWkStudent struct {
+}
+
+func (WkInfoWkStudent) TableName() string {
+	return "wk_info_wk_student"
+}
