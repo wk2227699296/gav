@@ -22,6 +22,7 @@ type _gorm struct{}
 // Config gorm 自定义配置
 // Author [SliverHorn](https://github.com/SliverHorn)
 func (g *_gorm) Config(prefix string, singular bool) *gorm.Config {
+
 	config := &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			TablePrefix:   prefix,
@@ -58,5 +59,16 @@ func (g *_gorm) Config(prefix string, singular bool) *gorm.Config {
 	default:
 		config.Logger = _default.LogMode(logger.Info)
 	}
+	newLogger := logger.New(
+		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
+		logger.Config{
+			SlowThreshold:             time.Second, // Slow SQL threshold
+			LogLevel:                  logger.Info, // Log level
+			IgnoreRecordNotFoundError: true,        // Ignore ErrRecordNotFound error for logger
+			ParameterizedQueries:      true,        // Don't include params in the SQL log
+			Colorful:                  true,        // Disable color
+		},
+	)
+	config.Logger = newLogger
 	return config
 }
