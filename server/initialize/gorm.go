@@ -7,12 +7,11 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/model/example"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
 
+	"github.com/flipped-aurora/gin-vue-admin/server/model/wkTest"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
-// Gorm 初始化数据库并产生数据库全局变量
-// Author SliverHorn
 func Gorm() *gorm.DB {
 	switch global.GVA_CONFIG.System.DbType {
 	case "mysql":
@@ -30,12 +29,9 @@ func Gorm() *gorm.DB {
 	}
 }
 
-// RegisterTables 注册数据库表专用
-// Author SliverHorn
 func RegisterTables() {
 	db := global.GVA_DB
 	err := db.AutoMigrate(
-		// 系统模块表
 		system.SysApi{},
 		system.SysUser{},
 		system.SysBaseMenu{},
@@ -50,11 +46,10 @@ func RegisterTables() {
 		system.SysAuthorityBtn{},
 		system.SysAutoCode{},
 		system.SysChatGptOption{},
-
 		example.ExaFile{},
 		example.ExaCustomer{},
 		example.ExaFileChunk{},
-		example.ExaFileUploadAndDownload{},
+		example.ExaFileUploadAndDownload{}, wkTest.WkInfo{}, wkTest.WkStudent{},
 	)
 	if err != nil {
 		global.GVA_LOG.Error("register table failed", zap.Error(err))
