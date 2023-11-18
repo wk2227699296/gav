@@ -67,6 +67,7 @@ func Routers() *gin.Engine {
 		wkTestRouter := router.RouterGroupApp.WkTest
 		wkTestRouter.InitWkInfoRouter(PrivateGroup)
 		wkTestRouter.InitWkStudentRouter(PrivateGroup)
+		wkTestRouter.InitWkClassRouter(PrivateGroup)
 	}
 
 	global.GVA_LOG.Info("router register success")

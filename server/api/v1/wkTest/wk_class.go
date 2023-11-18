@@ -1,42 +1,38 @@
 package wkTest
 
 import (
-	"encoding/json"
-	"fmt"
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/wkTest"
 	wkTestReq "github.com/flipped-aurora/gin-vue-admin/server/model/wkTest/request"
 	"github.com/flipped-aurora/gin-vue-admin/server/service"
-	"github.com/flipped-aurora/gin-vue-admin/server/utils"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
 
-type WkInfoApi struct {
+type WkClassApi struct {
 }
 
-var wkinfoService = service.ServiceGroupApp.WkTestServiceGroup.WkInfoService
+var wClassService = service.ServiceGroupApp.WkTestServiceGroup.WkClassService
 
-// CreateWkInfo 创建WkInfo
-// @Tags WkInfo
-// @Summary 创建WkInfo
+// CreateWkClass 创建WkClass
+// @Tags WkClass
+// @Summary 创建WkClass
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body wkTest.WkInfo true "创建WkInfo"
+// @Param data body wkTest.WkClass true "创建WkClass"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":global.Translate("general.getDataSuccess")}"
-// @Router /wkinfo/createWkInfo [post]
-func (wkinfoApi *WkInfoApi) CreateWkInfo(c *gin.Context) {
-	var wkinfo wkTest.WkInfo
-	err := c.ShouldBindJSON(&wkinfo)
+// @Router /wClass/createWkClass [post]
+func (wClassApi *WkClassApi) CreateWkClass(c *gin.Context) {
+	var wClass wkTest.WkClass
+	err := c.ShouldBindJSON(&wClass)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	wkinfo.CreatedBy = utils.GetUserID(c)
-	if err := wkinfoService.CreateWkInfo(&wkinfo); err != nil {
+	if err := wClassService.CreateWkClass(&wClass); err != nil {
 		global.GVA_LOG.Error(global.Translate("general.creationFail"), zap.Error(err))
 		response.FailWithMessage(global.Translate("general.creationFailErr"), c)
 	} else {
@@ -44,24 +40,23 @@ func (wkinfoApi *WkInfoApi) CreateWkInfo(c *gin.Context) {
 	}
 }
 
-// DeleteWkInfo 删除WkInfo
-// @Tags WkInfo
-// @Summary 删除WkInfo
+// DeleteWkClass 删除WkClass
+// @Tags WkClass
+// @Summary 删除WkClass
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body wkTest.WkInfo true "删除WkInfo"
+// @Param data body wkTest.WkClass true "删除WkClass"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"删除成功"}"
-// @Router /wkinfo/deleteWkInfo [delete]
-func (wkinfoApi *WkInfoApi) DeleteWkInfo(c *gin.Context) {
-	var wkinfo wkTest.WkInfo
-	err := c.ShouldBindJSON(&wkinfo)
+// @Router /wClass/deleteWkClass [delete]
+func (wClassApi *WkClassApi) DeleteWkClass(c *gin.Context) {
+	var wClass wkTest.WkClass
+	err := c.ShouldBindJSON(&wClass)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	wkinfo.DeletedBy = utils.GetUserID(c)
-	if err := wkinfoService.DeleteWkInfo(wkinfo); err != nil {
+	if err := wClassService.DeleteWkClass(wClass); err != nil {
 		global.GVA_LOG.Error(global.Translate("general.deleteFail"), zap.Error(err))
 		response.FailWithMessage(global.Translate("general.deletFailErr"), c)
 	} else {
@@ -69,24 +64,23 @@ func (wkinfoApi *WkInfoApi) DeleteWkInfo(c *gin.Context) {
 	}
 }
 
-// DeleteWkInfoByIds 批量删除WkInfo
-// @Tags WkInfo
-// @Summary 批量删除WkInfo
+// DeleteWkClassByIds 批量删除WkClass
+// @Tags WkClass
+// @Summary 批量删除WkClass
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body request.IdsReq true "批量删除WkInfo"
+// @Param data body request.IdsReq true "批量删除WkClass"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"批量删除成功"}"
-// @Router /wkinfo/deleteWkInfoByIds [delete]
-func (wkinfoApi *WkInfoApi) DeleteWkInfoByIds(c *gin.Context) {
+// @Router /wClass/deleteWkClassByIds [delete]
+func (wClassApi *WkClassApi) DeleteWkClassByIds(c *gin.Context) {
 	var IDS request.IdsReq
 	err := c.ShouldBindJSON(&IDS)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	deletedBy := utils.GetUserID(c)
-	if err := wkinfoService.DeleteWkInfoByIds(IDS, deletedBy); err != nil {
+	if err := wClassService.DeleteWkClassByIds(IDS); err != nil {
 		global.GVA_LOG.Error(global.Translate("sys_operation_record.batchDeleteFail"), zap.Error(err))
 		response.FailWithMessage(global.Translate("sys_operation_record.batchDeleteFailErr"), c)
 	} else {
@@ -94,24 +88,23 @@ func (wkinfoApi *WkInfoApi) DeleteWkInfoByIds(c *gin.Context) {
 	}
 }
 
-// UpdateWkInfo 更新WkInfo
-// @Tags WkInfo
-// @Summary 更新WkInfo
+// UpdateWkClass 更新WkClass
+// @Tags WkClass
+// @Summary 更新WkClass
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body wkTest.WkInfo true "更新WkInfo"
+// @Param data body wkTest.WkClass true "更新WkClass"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"更新成功"}"
-// @Router /wkinfo/updateWkInfo [put]
-func (wkinfoApi *WkInfoApi) UpdateWkInfo(c *gin.Context) {
-	var wkinfo wkTest.WkInfo
-	err := c.ShouldBindJSON(&wkinfo)
+// @Router /wClass/updateWkClass [put]
+func (wClassApi *WkClassApi) UpdateWkClass(c *gin.Context) {
+	var wClass wkTest.WkClass
+	err := c.ShouldBindJSON(&wClass)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	wkinfo.UpdatedBy = utils.GetUserID(c)
-	if err := wkinfoService.UpdateWkInfo(wkinfo); err != nil {
+	if err := wClassService.UpdateWkClass(wClass); err != nil {
 		global.GVA_LOG.Error(global.Translate("general.updateFail"), zap.Error(err))
 		response.FailWithMessage(global.Translate("general.updateFailErr"), c)
 	} else {
@@ -119,62 +112,50 @@ func (wkinfoApi *WkInfoApi) UpdateWkInfo(c *gin.Context) {
 	}
 }
 
-// FindWkInfo 用id查询WkInfo
-// @Tags WkInfo
-// @Summary 用id查询WkInfo
+// FindWkClass 用id查询WkClass
+// @Tags WkClass
+// @Summary 用id查询WkClass
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data query wkTest.WkInfo true "用id查询WkInfo"
+// @Param data query wkTest.WkClass true "用id查询WkClass"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"查询成功"}"
-// @Router /wkinfo/findWkInfo [get]
-func (wkinfoApi *WkInfoApi) FindWkInfo(c *gin.Context) {
-	var wkinfo wkTest.WkInfo
-	err := c.ShouldBindQuery(&wkinfo)
+// @Router /wClass/findWkClass [get]
+func (wClassApi *WkClassApi) FindWkClass(c *gin.Context) {
+	var wClass wkTest.WkClass
+	err := c.ShouldBindQuery(&wClass)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if rewkinfo, err := wkinfoService.GetWkInfo(wkinfo.ID); err != nil {
+	if rewClass, err := wClassService.GetWkClass(wClass.ID); err != nil {
 		global.GVA_LOG.Error(global.Translate("general.queryFail"), zap.Error(err))
 		response.FailWithMessage(global.Translate("general.queryFailErr"), c)
 	} else {
-		response.OkWithData(gin.H{"rewkinfo": rewkinfo}, c)
+		response.OkWithData(gin.H{"rewClass": rewClass}, c)
 	}
 }
 
-// GetWkInfoList 分页获取WkInfo列表
-// @Tags WkInfo
-// @Summary 分页获取WkInfo列表
+// GetWkClassList 分页获取WkClass列表
+// @Tags WkClass
+// @Summary 分页获取WkClass列表
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data query wkTestReq.WkInfoSearch true "分页获取WkInfo列表"
+// @Param data query wkTestReq.WkClassSearch true "分页获取WkClass列表"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /wkinfo/getWkInfoList [get]
-func (wkinfoApi *WkInfoApi) GetWkInfoList(c *gin.Context) {
-	var pageInfo wkTestReq.WkInfoSearch
+// @Router /wClass/getWkClassList [get]
+func (wClassApi *WkClassApi) GetWkClassList(c *gin.Context) {
+	var pageInfo wkTestReq.WkClassSearch
 	err := c.ShouldBindQuery(&pageInfo)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if list, total, err := wkinfoService.GetWkInfoInfoList(pageInfo); err != nil {
+	if list, total, err := wClassService.GetWkClassInfoList(pageInfo); err != nil {
 		global.GVA_LOG.Error(global.Translate("general.getDataFail"), zap.Error(err))
 		response.FailWithMessage(global.Translate("general.getDataFailErr"), c)
 	} else {
-		// 遍历list
-		for k, v := range list {
-			var numbers []int
-			// 使用json.Unmarshal解析JSON字符串
-			err := json.Unmarshal([]byte(v.Class), &numbers)
-			if err != nil {
-				fmt.Println("解析失败:", err)
-				return
-			}
-			global.GVA_DB.Where("id IN (?)", numbers).Find(&list[k].ClassList)
-		}
-
 		response.OkWithDetailed(response.PageResult{
 			List:     list,
 			Total:    total,

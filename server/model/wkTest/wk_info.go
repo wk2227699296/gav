@@ -11,6 +11,8 @@ type WkInfo struct {
 	Name      string      `json:"name" form:"name" gorm:"column:name;comment:;"` //name
 	Age       string      `json:"age" form:"age" gorm:"column:age;comment:;"`    //age
 	Student   []WkStudent `json:"student" form:"student" gorm:"many2many:wk_info_wk_student;"`
+	Class     string      `json:"class" form:"class" gorm:"column:class;comment:;"`
+	ClassList []WkClass   `json:"classList" gorm:"-"`
 	CreatedBy uint        `gorm:"column:created_by;comment:创建者"`
 	UpdatedBy uint        `gorm:"column:updated_by;comment:更新者"`
 	DeletedBy uint        `gorm:"column:deleted_by;comment:删除者"`
